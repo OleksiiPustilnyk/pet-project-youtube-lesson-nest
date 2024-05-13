@@ -5,8 +5,8 @@ import { UserModule } from '../user/user.module';
 
 // расширяем класс AppModule
 @Module({
-  imports: [UserModule],
-  controllers: [AppController],
-  providers: [AppService], //обрабатывают бизнес логику проекта
+    imports: [UserModule],
+    controllers: [AppController],
+    providers: [AppService], //обрабатывают бизнес логику проекта
 })
 export class AppModule {}
