@@ -2,11 +2,13 @@ import { NestFactory } from '@nestjs/core'; //создание и запуск �
 import { AppModule } from './modules/app/app.module'; //корневой модуль
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
     const port = configService.get('port');
+    app.useGlobalPipes(new ValidationPipe());
 
     const config = new DocumentBuilder() // Swagger нужен для создания документации, его можно вызвать по ссылке: http://localhost:3000/api
         .setTitle('Lesson api')
