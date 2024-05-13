@@ -1,8 +1,11 @@
 import { NestFactory } from '@nestjs/core'; //создание и запуск приложения
-import { AppModule } from './app/app.module'; //корневой модуль
+import { AppModule } from './modules/app/app.module'; //корневой модуль
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+    const app = await NestFactory.create(AppModule);
+    const configService = app.get(ConfigService);
+    const port = configService.get('port');
+    await app.listen(port);
 }
 bootstrap();
