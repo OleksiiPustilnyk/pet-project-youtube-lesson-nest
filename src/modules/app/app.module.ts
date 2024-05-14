@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import configurations from 'src/configurations';
 import { User } from '../users/models/user.model';
+import { AuthModule } from '../auth/auth.module';
 
 // расширяем класс AppModule
 @Module({
@@ -30,6 +31,7 @@ import { User } from '../users/models/user.model';
             }),
         }),
         UserModule,
+        AuthModule,
     ], //forFeature - работаем внутри модуля, forRoot - работаем глобально, forRootAsync - для работы ассинхронно
     controllers: [AppController],
     providers: [AppService], //обрабатывают бизнес логику проекта
