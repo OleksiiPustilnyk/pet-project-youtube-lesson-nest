@@ -8,6 +8,7 @@ import configurations from 'src/configurations';
 import { User } from '../users/models/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { TokenModule } from '../token/token.module';
+import { WatchlistModule } from '../watchlist/watchlist.module';
 
 // расширяем класс AppModule
 @Module({
@@ -34,6 +35,7 @@ import { TokenModule } from '../token/token.module';
         UserModule,
         AuthModule,
         TokenModule,
+        WatchlistModule,
     ], //forFeature - работаем внутри модуля, forRoot - работаем глобально, forRootAsync - для работы ассинхронно
     controllers: [AppController],
     providers: [AppService], //обрабатывают бизнес логику проекта
