@@ -9,8 +9,8 @@ import { User } from '../users/models/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { TokenModule } from '../token/token.module';
 import { WatchlistModule } from '../watchlist/watchlist.module';
+import { Watchlist } from '../watchlist/models/watchlist.model';
 
-// расширяем класс AppModule
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -29,15 +29,15 @@ import { WatchlistModule } from '../watchlist/watchlist.module';
                 database: configService.get('db_name'),
                 synchronize: true,
                 autoLoadModels: true,
-                models: [User],
+                models: [User, Watchlist],
             }),
         }),
         UserModule,
         AuthModule,
         TokenModule,
         WatchlistModule,
-    ], //forFeature - работаем внутри модуля, forRoot - работаем глобально, forRootAsync - для работы ассинхронно
+    ],
     controllers: [AppController],
-    providers: [AppService], //обрабатывают бизнес логику проекта
+    providers: [AppService],
 })
 export class AppModule {}
