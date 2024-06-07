@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDTO, UpdateUserDTO } from './dto';
+import { CreateUserDTO, UpdatePasswordDTO, UpdateUserDTO } from './dto';
 import { Watchlist } from '../watchlist/models/watchlist.model';
 import { TokenService } from '../token/token.service';
 import { AuthUserResponse } from '../auth/response';
+import { AppError } from '../../common/constants/errors';
 
 @Injectable()
-export class UserService {
+export class UsersService {
     constructor(
         @InjectModel(User) private readonly userRepository: typeof User,
         private readonly tokenService: TokenService,
@@ -25,7 +26,7 @@ export class UserService {
     async findUserByEmail(email: string): Promise<User> {
         try {
             return this.userRepository.findOne({
-                where: { email },
+                where: { email: email },
                 include: {
                     model: Watchlist,
                     required: false,
@@ -36,7 +37,21 @@ export class UserService {
         }
     }
 
-    async createUser(dto): Promise<CreateUserDTO> {
+    async findUserById(id: number): Promise<User> {
+        try {
+            return this.userRepository.findOne({
+                where: { id },
+                include: {
+                    model: Watchlist,
+                    required: false,
+                },
+            });
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    async createUser(dto: CreateUserDTO): Promise<CreateUserDTO> {
         try {
             dto.password = await this.hashPassword(dto.password);
             await this.userRepository.create({
@@ -80,9 +95,29 @@ export class UserService {
         }
     }
 
-    async deleteUser(email: string): Promise<boolean> {
+    async updatePassword(userId: number, dto: UpdatePasswordDTO): Promise<any> {
         try {
-            await this.userRepository.destroy({ where: { email } });
+            const { password } = await this.findUserById(userId);
+            const currentPassword = await bcrypt.compare(
+                dto.oldPassword,
+                password,
+            );
+            if (!currentPassword)
+                return new BadRequestException(AppError.WRONG_DATA);
+            const newPassword = await this.hashPassword(dto.newPassword);
+            const data = {
+                password: newPassword,
+            };
+
+            return this.userRepository.update(data, { where: { id: userId } });
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    async deleteUser(id: number): Promise<boolean> {
+        try {
+            await this.userRepository.destroy({ where: { id } });
             return true;
         } catch (e) {
             throw new Error(e);

@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -13,13 +14,13 @@ import { UserLoginDTO } from './dto';
 import { AuthUserResponse } from './response';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-guard';
-import { UserService } from '../users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        private readonly userService: UserService,
+        private readonly userService: UsersService,
     ) {}
 
     @ApiTags('API')
@@ -34,7 +35,9 @@ export class AuthController {
     @ApiResponse({ status: 200, type: AuthUserResponse })
     @HttpCode(200)
     @Post('login')
-    login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
+    login(
+        @Body() dto: UserLoginDTO,
+    ): Promise<AuthUserResponse | BadRequestException> {
         return this.authService.loginUser(dto);
     }
 

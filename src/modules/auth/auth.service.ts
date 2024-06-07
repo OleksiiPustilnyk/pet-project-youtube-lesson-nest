@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserService } from '../users/users.service';
+import { UsersService } from '../users/users.service';
 import { CreateUserDTO } from '../users/dto';
 import { AppError } from 'src/common/constants/errors';
 import { UserLoginDTO } from './dto';
@@ -8,7 +8,7 @@ import { AuthUserResponse } from './response';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UsersService) {}
 
     async registerUsers(dto: CreateUserDTO): Promise<AuthUserResponse> {
         try {
@@ -22,7 +22,9 @@ export class AuthService {
         }
     }
 
-    async loginUser(dto: UserLoginDTO): Promise<AuthUserResponse> {
+    async loginUser(
+        dto: UserLoginDTO,
+    ): Promise<AuthUserResponse | BadRequestException> {
         try {
             const existUser = await this.userService.findUserByEmail(dto.email);
             if (!existUser)
