@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 export default () => ({
     port: process.env.PORT,
     db_port: process.env.DB_PORT,
